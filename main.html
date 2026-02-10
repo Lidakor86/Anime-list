@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Anime Watchlist</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #6a5acd;
+            --primary-light: #9370db;
+            --secondary: #ff7f50;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --border: #dee2e6;
+            --success: #28a745;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        
+        .subtitle {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .panel {
+            flex: 1;
+            min-width: 300px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            border-top: 5px solid var(--primary);
+        }
+        
+        .panel h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .panel h2 i {
+            color: var(--secondary);
+        }
+        
+        /* Anime List Styles */
+        .anime-list {
+            list-style: none;
+        }
+        
+        .anime-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-light);
+            background-color: var(--light);
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .anime-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .anime-info h3 {
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+        
+        .anime-meta {
+            display: flex;
+            gap: 15px;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .anime-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .btn-remove {
+            background-color: #ff6b6b;
+            color: white;
+        }
+        
+        .btn-remove:hover {
+            background-color: #ff5252;
+        }
+        
+        /* Genre List Styles */
+        .genre-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .genre-item {
+            padding: 10px 20px;
+            background-color: var(--light);
+            border-radius: 30px;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            cursor: default;
+        }
+        
+        .genre-item:hover {
+            border-color: var(--primary-light);
+            background-color: rgba(106, 90, 205, 0.1);
+        }
+        
+        .genre-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .genre-count {
+            background-color: var(--primary);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            margin-left: 5px;
+        }
+        
+        /* Add Form Styles */
+        .add-form {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            margin-top: 20px;
+            border-top: 5px solid var(--secondary);
+        }
+        
+        .form-title {
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .btn-add {
+            background-color: var(--success);
+            color: white;
+            padding: 12px 25px;
+            font-size: 1rem;
+            width: 100%;
+        }
+        
+        .btn-add:hover {
+            background-color: #218838;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            background-color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+            min-width: 150px;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .panel {
+                min-width: 100%;
+            }
+            
+            .stats {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .stat-item {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><i class="fas fa-tv"></i> My Anime Watchlist</h1>
+        <p class="subtitle">Track what you've watched and explore genres</p>
+    </header>
+    
+    <div class="container">
+        <div class="panel">
+            <h2><i class="fas fa-list"></i> Watched Anime</h2>
+            <ul class="anime-list" id="animeList">
+                <!-- Anime items will be added here by JavaScript -->
+            </ul>
+        </div>
+        
+        <div class="panel">
+            <h2><i class="fas fa-tags"></i> Anime Genres</h2>
+            <div class="genre-list" id="genreList">
+                <!-- Genre items will be added here by JavaScript -->
+            </div>
+        </div>
+    </div>
+    
+    <div class="add-form">
+        <h2 class="form-title"><i class="fas fa-plus-circle"></i> Add New Anime</h2>
+        <form id="animeForm">
+            <div class="form-group">
+                <label for="animeTitle">Anime Title</label>
+                <input type="text" id="animeTitle" placeholder="e.g., Attack on Titan" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="animeGenre">Genre</label>
+                <select id="animeGenre" required>
+                    <option value="">Select a genre</option>
+                    <option value="Action">Action</option>
+                    <option value="Adventure">Adventure</option>
+                    <option value="Comedy">Comedy</option>
+                    <option value="Drama">Drama</option>
+                    <option value="Fantasy">Fantasy</option>
+                    <option value="Horror">Horror</option>
+                    <option value="Mystery">Mystery</option>
+                    <option value="Romance">Romance</option>
+                    <option value="Sci-Fi">Sci-Fi</option>
+                    <option value="Slice of Life">Slice of Life</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Supernatural">Supernatural</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="animeEpisodes">Episodes Watched</label>
+                <input type="number" id="animeEpisodes" placeholder="e.g., 25" min="1" required>
+            </div>
+            
+            <button type="submit" class="btn btn-add">
+                <i class="fas fa-plus"></i> Add to Watchlist
+            </button>
+        </form>
+    </div>
+    
+    <div class="stats">
+        <div class="stat-item">
+            <div class="stat-value" id="totalAnime">0</div>
+            <div class="stat-label">Total Anime</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="totalEpisodes">0</div>
+            <div class="stat-label">Total Episodes</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="totalGenres">0</div>
+            <div class="stat-label">Genres Watched</div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>My Anime Watchlist &copy; <span id="currentYear"></span> • Track your anime journey</p>
+        <p>Data is saved in your browser's local storage</p>
+    </footer>
+
+    <script>
+        // Sample initial data
+        let animeList = [
+            { id: 1, title: "Attack on Titan", genre: "Action", episodes: 75 },
+            { id: 2, title: "Your Lie in April", genre: "Drama", episodes: 22 },
+            { id: 3, title: "My Hero Academia", genre: "Action", episodes: 113 },
+            { id: 4, title: "Death Note", genre: "Mystery", episodes: 37 },
+            { id: 5, title: "One Punch Man", genre: "Comedy", episodes: 24 },
+            { id: 6, title: "Violet Evergarden", genre: "Drama", episodes: 13 },
+            { id: 7, title: "Demon Slayer", genre: "Action", episodes: 44 },
+            { id: 8, title: "Haikyuu!!", genre: "Sports", episodes: 85 }
+        ];
+        
+        // Genre colors mapping
+        const genreColors = {
+            "Action": "#ff6b6b",
+            "Adventure": "#1dd1a1",
+            "Comedy": "#feca57",
+            "Drama": "#54a0ff",
+            "Fantasy": "#5f27cd",
+            "Horror": "#222f3e",
+            "Mystery": "#8395a7",
+            "Romance": "#ff9ff3",
+            "Sci-Fi": "#0abde3",
+            "Slice of Life": "#10ac84",
+            "Sports": "#ee5253",
+            "Supernatural": "#341f97"
+        };
+        
+        // DOM elements
+        const animeListEl = document.getElementById('animeList');
+        const genreListEl = document.getElementById('genreList');
+        const animeForm = document.getElementById('animeForm');
+        const totalAnimeEl = document.getElementById('totalAnime');
+        const totalEpisodesEl = document.getElementById('totalEpisodes');
+        const totalGenresEl = document.getElementById('totalGenres');
+        
+        // Load data from localStorage or use sample data
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedAnime = localStorage.getItem('animeWatchlist');
+            if (savedAnime) {
+                animeList = JSON.parse(savedAnime);
+            }
+            
+            // Set current year in footer
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+            
+            renderAnimeList();
+            renderGenreList();
+            updateStats();
+        });
+        
+        // Render anime list
+        function renderAnimeList() {
+            animeListEl.innerHTML = '';
+            
+            if (animeList.length === 0) {
+                animeListEl.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 20px;">No anime in your list yet. Add some above!</p>';
+                return;
+            }
+            
+            animeList.forEach(anime => {
+                const animeItem = document.createElement('li');
+                animeItem.className = 'anime-item';
+                animeItem.setAttribute('data-id', anime.id);
+                
+                animeItem.innerHTML = `
+                    <div class="anime-info">
+                        <h3>${anime.title}</h3>
+                        <div class="anime-meta">
+                            <span class="genre-badge" style="background-color: ${genreColors[anime.genre] || '#6a5acd'}; color: white; padding: 3px 10px; border-radius: 15px; font-size: 0.8rem;">
+                                ${anime.genre}
+                            </span>
+                            <span><i class="far fa-eye"></i> ${anime.episodes} episodes</span>
+                        </div>
+                    </div>
+                    <div class="anime-actions">
+                        <button class="btn btn-remove" onclick="removeAnime(${anime.id})">
+                            <i class="fas fa-trash"></i> Remove
+                        </button>
+                    </div>
+                `;
+                
+                animeListEl.appendChild(animeItem);
+            });
+        }
+        
+        // Render genre list
+        function renderGenreList() {
+            genreListEl.innerHTML = '';
+            
+            // Count anime per genre
+            const genreCount = {};
+            animeList.forEach(anime => {
+                genreCount[anime.genre] = (genreCount[anime.genre] || 0) + 1;
+            });
+            
+            // Create genre items
+            Object.entries(genreCount).forEach(([genre, count]) => {
+                const genreItem = document.createElement('div');
+                genreItem.className = 'genre-item';
+                
+                genreItem.innerHTML = `
+                    <span class="genre-color" style="background-color: ${genreColors[genre] || '#6a5acd'};"></span>
+                    <span class="genre-name">${genre}</span>
+                    <span class="genre-count">${count}</span>
+                `;
+                
+                genreListEl.appendChild(genreItem);
+            });
+        }
+        
+        // Update statistics
+        function updateStats() {
+            // Total anime count
+            totalAnimeEl.textContent = animeList.length;
+            
+            // Total episodes count
+            const totalEpisodes = animeList.reduce((sum, anime) => sum + anime.episodes, 0);
+            totalEpisodesEl.textContent = totalEpisodes;
+            
+            // Total unique genres count
+            const uniqueGenres = new Set(animeList.map(anime => anime.genre));
+            totalGenresEl.textContent = uniqueGenres.size;
+        }
+        
+        // Remove anime from list
+        function removeAnime(id) {
+            animeList = animeList.filter(anime => anime.id !== id);
+            saveToLocalStorage();
+            renderAnimeList();
+            renderGenreList();
+            updateStats();
+        }
+        
+        // Add new anime
+        animeForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('animeTitle').value;
+            const genre = document.getElementById('animeGenre').value;
+            const episodes = parseInt(document.getElementById('animeEpisodes').value);
+            
+            // Generate a unique ID
+            const newId = animeList.length > 0 ? Math.max(...animeList.map(a => a.id)) + 1 : 1;
+            
+            // Add to list
+            animeList.push({
+                id: newId,
+                title: title,
+                genre: genre,
+                episodes: episodes
+            });
+            
+            // Save to localStorage
+            saveToLocalStorage();
+            
+            // Reset form
+            animeForm.reset();
+            
+            // Update UI
+            renderAnimeList();
+            renderGenreList();
+            updateStats();
+            
+            // Show feedback
+            alert(`${title} has been added to your watchlist!`);
+        });
+        
+        // Save to localStorage
+        function saveToLocalStorage() {
+            localStorage.setItem('animeWatchlist', JSON.stringify(animeList));
+        }
+    </script>
+</body>
+</html>
